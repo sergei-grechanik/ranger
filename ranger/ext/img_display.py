@@ -779,3 +779,39 @@ class UeberzugImageDisplayer(ImageDisplayer):
                 self.process.communicate()
             finally:
                 timer_kill.cancel()
+
+@register_image_displayer("tupimage")
+class TupimageImageDisplayer(ImageDisplayer):
+    """Implementation of ImageDisplayer using tupimage
+    (https://github.com/sergei-grechanik/tupimage).
+
+    Tupimage uses a modified kitty graphics protocol under the hood, works over
+    ssh and inside tmux.
+    """
+    tupimage_command = ['tupimage']
+
+    def draw(self, path, start_x, start_y, width, height):
+        #  self.clear(start_x, start_y, width, height)
+        with temporarily_moved_cursor(start_y, start_x):
+            command = self.tupimage_command + [path]
+            # Set the position and the maximum size of the image. The position
+            # coordinates are 1-based.
+            command += ['-x', str(start_x + 1), '-y', str(start_y + 1)]
+            command += ['--max-rows', str(height), '--max-cols', str(width)]
+            # Abort if the user presses a key.
+            command += ["--abort-on-keypress"]
+            # Don't issue column diacritics (faster).
+            command += ["--less-diacritics"]
+            # Don't print errors to stderr (they will still be printed to tty).
+            command += ["--err", "/dev/null"]
+            process = Popen(command, cwd=self.working_dir,
+                            universal_newlines=True)
+            process.wait()
+
+    def clear(self, start_x, start_y, width, height):
+        win = curses.newwin(height, width, start_y, start_x)
+        win.clear();
+        win.redrawwin();
+
+    def quit(self):
+        self.clear(0, 0, 0, 0)

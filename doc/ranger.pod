@@ -229,8 +229,8 @@ C<img2txt> (from C<caca-utils>) for ASCII-art image previews
 
 =item -
 
-C<w3mimgdisplay>, C<ueberzug>, C<mpv>, C<iTerm2>, C<kitty>, C<terminology> or
-C<urxvt> for image previews
+C<w3mimgdisplay>, C<ueberzug>, C<mpv>, C<iTerm2>, C<kitty>, C<terminology>,
+C<urxvt> or C<tupimage> for image previews
 
 =item -
 
@@ -373,6 +373,11 @@ C<preview_images_method> to w3m.
 
 When using a terminal with a nonzero border which is not automatically detected, the w3m preview will be misaligned.
 Use the C<w3m_offset> option to manually adjust the image offset. This should be the same value as the terminal's border value.
+
+=head3 tupimage
+
+Tupimage is a script that uses a modified version of the kitty graphics
+protocol. Supports tmux and ssh. Only works in a fork of kitty and a fork of st.
 
 =head2 SELECTION
 
